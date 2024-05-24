@@ -4,9 +4,9 @@
     </head>
     <body>
         <div>
-        <a href="/ButTitik"><button><p>ELLEN</p></button></a>
-            <a href=""><button><p>DIKA</p></button></a>
-            <a href=""><button><p>AGENG</p></button></a>
+        <a href="/hewan"><button><p>ELLEN</p></button></a>
+            <a href="/setinfo"><button><p>DIKA</p></button></a>
+            <a href="/setinfo"><button><p>AGENG</p></button></a>
             <a href="/new"><button><p>EVI</p></button></a>
         </div>
         
@@ -43,6 +43,5 @@
         body>div>a>button:active{
             background-color: grey;
         }
-        button
     </style>
 </html>

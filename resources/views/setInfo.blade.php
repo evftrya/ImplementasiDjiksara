@@ -8,7 +8,7 @@
 <body >
     @foreach($titiks as $titik)
        
-        <button id="butTitiks" class="Tititik" onclick="isi('{{$titik['Nama']}}')" style="position: absolute; top:{{$titik['yDot']}}px; left:{{$titik['xDot']}}px;z-index:400;"><p>{{$titik['Nama']}}</p></button>
+        <button id="butTitiks" class="Tititik" onclick="isi('{{$titik['Nama']}}')" style="position: absolute; top:{{$titik['yDot']}}px; left:{{$titik['xDot']}}px; z-index:400;"><p>{{$titik['Nama']}}</p></button>
     @endforeach
         <svg class="lines" width="130vh" height="97vh" style="border:1px white solid; position:fixed; z-index:300;">
         @foreach($lines as $line)
