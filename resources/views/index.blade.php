@@ -8,6 +8,10 @@
             <a href="/setinfo"><button><p>DIKA</p></button></a>
             <a href="/setinfo"><button><p>AGENG</p></button></a>
             <a href="/new"><button><p>EVI</p></button></a>
+            <a href="/denah"><button><p>Denah</p></button></a>
+            <a href="/new"><button><p>EVI</p></button></a>
+            <a href="/new"><button><p>EVI</p></button></a>
+            <a href="/new"><button><p>EVI</p></button></a>
         </div>
         
     </body>

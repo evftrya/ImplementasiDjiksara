@@ -58,7 +58,7 @@ Route::get('/setinfo',[InfoController::class,'index']);
 Route::post('/setinfo/store',[InfoController::class,'store']);
 Route::get('/apeni',[InfoController::class,'cek']);
 Route::post('/closest-Route',[InfoController::class,'Rute']);
-Route::get('/final',[InfoController::class,'final']);
+Route::get('/denah',[InfoController::class,'final']);
 // Route::get('/rute',[InfoController::class,'rute']);
 
 
