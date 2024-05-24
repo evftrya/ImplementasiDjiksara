@@ -47,8 +47,8 @@ class InfoController extends Controller
 
         ]);
         $tujuan = $this->getTitikTujuan($request->inpTujuan);
-        dd($tujuan,$request->inpAwal);
         $tc = new TitikController();
+        $finalResult = [];
         $hasils = [];
         $shortest = 0;
         $index = 0;
@@ -66,13 +66,43 @@ class InfoController extends Controller
             }
             $itg = $itg+1;
         }
-        dd($hasils);
+        // dd("hasil",$hasils,"tujuan",$tujuan,"awal",$request->inpAwal,"akhir",$request->inpTujuan);
 
-        // foreach()
+        array_push($finalResult,$hasils[$index]);
+        // dd($finalResult[0][1]);
+        $back = [];
+        array_push($back,$finalResult[0][0]);
+        $dataLines = [];
+        for($q=(count($finalResult[0][1])-1);$q>=0;$q--){
+            if($q!=0){
+                // echo $q." ".$q-1;
+                $dataline = $tc->getLiness($finalResult[0][1][$q],$finalResult[0][1][$q-1]);
+                // dd($dataline);
+                array_push($dataLines,$dataline);
+            }
+        }
+        array_push($back,$dataLines);
         
 
-        return redirect('/');
+        //persiapan masuk page
+        $ButTitiks = new ButTitikController();
+        $titikss = new TitikController();
+        $hew = new HewanController();
+        $Lines = $titikss->all();
+        $hewans = $hew->all();
+        // dd($titiks);
+        $titiks= $ButTitiks->all();
+        $arys = $this->GetAllInfo();
+        $ShowLines = $back;
+        
+        return view('rute',['show' => $ShowLines,'Lines'=>$Lines]);
+
+        
+        
     }
+
+    
+    
     public function getTitikTujuan($lokasi){
         $titik = Info::select('Titik')
             ->where('Lokasi_atau_hewan', $lokasi)

@@ -214,7 +214,9 @@ class TitikController extends Controller
         
         return $shortestPaths;
     } 
-    
+    public function go(){
+        $this->getLiness("CK","CL");
+    }
     public function brpjrk($dtitikAwal, $dtitikAkhir)
     {
         $results = DB::table('titiks')
@@ -227,7 +229,7 @@ class TitikController extends Controller
                       ->where('TitikAkhir', $dtitikAwal);
             })
             ->get();
-    
+            // dd($results);
         return $results;
     }
     
@@ -242,7 +244,43 @@ class TitikController extends Controller
         // $this->AllLineArray();
     }
     
+    public function getLiness($titikAwals,$titikAkhirs){
+        $results = Titik::select('TitikAwal as t1', 'bt1.xDot as x1', 'bt1.yDot as y1', 'TitikAkhir as t2', 'bt2.xDot as x2', 'bt2.yDot as y2')
+        ->join('but_titiks as bt1', 'bt1.Nama', '=', 'TitikAwal')
+        ->join('but_titiks as bt2', 'bt2.Nama', '=', 'TitikAkhir')
+        ->where(function ($query) use ($titikAwals, $titikAkhirs) {
+            $query->where('TitikAwal', '=', $titikAwals)
+                  ->where('TitikAkhir', '=', $titikAkhirs);
+        })
+        ->orWhere(function ($query) use ($titikAwals, $titikAkhirs) {
+            $query->where('TitikAwal', '=', $titikAkhirs)
+                  ->where('TitikAkhir', '=', $titikAwals);
+        })
+        ->get();
+    // dd($results);
+    // dd($results);
+    $back = [];
+    if($results[0]->t1==$titikAwals){
+        array_push($back,$results[0]->t1);
+        array_push($back,$results[0]->x1);
+        array_push($back,$results[0]->y1);
+        array_push($back,$results[0]->t2);
+        array_push($back,$results[0]->x2);
+        array_push($back,$results[0]->y2);
 
+    }
+    else{
+        array_push($back,$results[0]->t2);
+        array_push($back,$results[0]->x2);
+        array_push($back,$results[0]->y2);
+        array_push($back,$results[0]->t1);
+        array_push($back,$results[0]->x1);
+        array_push($back,$results[0]->y1);
+        
+    }
+    // dd($back);
+    return $back;
+    }
 }
 
 

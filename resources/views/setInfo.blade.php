@@ -25,7 +25,7 @@
             <button class="cek" id="gantiBut" onclick="ganti('kosong')">CEK GARIS</button>
             <button class="cek" id="kembali" onclick="ganti('full')" style="display:none;">KEMBALI</button>
             <a href="/new"><button>Reset</button></a>
-            <form action="/setinfo/store" method="post" id="myform">
+            <form action="/closest-Route" method="post" id="myform">
                 @csrf
                 <input type="text" id = "titik"name="titik" placeholder="Klik Tombol">
                 <input type="text" id="namaHewan" name="NamaHewan" placeholder="Klik Hewan">
