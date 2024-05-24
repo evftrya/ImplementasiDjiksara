@@ -37,7 +37,7 @@ Route::get('/', function(){
     return view('index');
 });
 Route::get('/new', [TitikController::class,'index']);
-Route::get('/teser', [TitikController::class,'tess']);
+Route::get('/teser', [ButTitikController::class,'GetTitikBut']);
 Route::get('/ButTitik', [ButTitikController::class,'index']);
 
 Route::post('/titik/store', [TitikController::class,'store']);
@@ -56,6 +56,9 @@ Route::post('/Hewan/store', [HewanController::class, 'store']);
 Route::get('/setinfo',[InfoController::class,'index']);
 Route::post('/setinfo/store',[InfoController::class,'store']);
 Route::get('/apeni',[InfoController::class,'cek']);
+Route::post('/final/store',[InfoController::class,'Rute']);
+Route::get('/final',[InfoController::class,'final']);
+// Route::get('/rute',[InfoController::class,'rute']);
 
 
 

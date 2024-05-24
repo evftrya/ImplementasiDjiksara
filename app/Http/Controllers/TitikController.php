@@ -99,62 +99,17 @@ class TitikController extends Controller
     
 
 
-    public function apanih(){
+    public function FindRute($tujuan,$Awal){
         set_time_limit(500);
 
         // Definisikan data 
 
         // Definisikan data garis-garis yang xtersedia
-        $lines = $this->AllLineArray();
-        function findShortestPaths($lines, $start, $end) {
-            // Inisialisasi antrian prioritas dengan jalur awal
-            $queue = [[$start]];
-            $shortestPaths = [];
         
-            // Selama antrian tidak kosong dan belum menemukan jalur terpendek
-            while (!empty($queue) && count($shortestPaths) < 1) {
-                // Ambil jalur pertama dari antrian
-                $path = array_shift($queue);
-                $currentNode = end($path);
-        
-                // Jika jalur saat ini mencapai titik akhir
-                if ($currentNode == $end) {
-                    // Tambahkan jalur ke daftar jalur terpendek
-                    $shortestPaths[] = $path;
-                    continue;
-                }
-        
-                // Loop melalui semua garis
-                foreach ($lines as $line) {
-                    // Jika titik awal garis sama dengan titik saat ini
-                    if ($line[0] == $currentNode && !in_array($line[1], $path)) {
-                        // Buat salinan jalur saat ini dan tambahkan titik akhir garis
-                        $newPath = $path;
-                        $newPath[] = $line[1];
-                        // Tambahkan jalur baru ke antrian prioritas
-                        $queue[] = $newPath;
-                    }
-                    // Jika titik akhir garis sama dengan titik saat ini (untuk garis yang dapat berbalik)
-                    elseif ($line[1] == $currentNode && !in_array($line[0], $path)) {
-                        // Buat salinan jalur saat ini dan tambahkan titik awal garis
-                        $newPath = $path;
-                        $newPath[] = $line[0];
-                        // Tambahkan jalur baru ke antrian prioritas
-                        $queue[] = $newPath;
-                    }
-                }
-        
-                // Urutkan antrian prioritas berdasarkan panjang jalur (semakin pendek, semakin awal)
-                usort($queue, function($a, $b) {
-                    return count($a) <=> count($b);
-                });
-            }
-        
-            return $shortestPaths;
-        }
         
         // Panggil fungsi untuk mencari 5 jalur terpendek dari titik AA ke titik BN
-        $shortestPaths = findShortestPaths($lines, "Z", "AF");
+        $lines = $this->AllLineArray();
+        $shortestPaths = $this->findShortestPaths($lines, $tujuan, $Awal);
         // dd($shortestPaths);
         $datajrk = [];
         $htg9 = 0;
@@ -173,12 +128,92 @@ class TitikController extends Controller
             $htg9 = $htg9+1;
         }
         
-        
+        $back = [];
+        foreach($shortestPaths as $rute){
+            $ary = [];
+            array_push($ary, $rute);
+            array_push($back, $ary);
+        }
+        for($y=0;$y<count($datajrk);$y++){
+            array_push($back[$y],$datajrk[$y]);
+        }
+
+        // dd($back);
+        $trullyBack = [];
+        $rilback = 0;
+        $index = 0;  
+        $itg = 0; 
+        foreach($back as $b){
+            if($rilback==0){
+                $rilback = $b[1];
+                $index = $itg;
+            }
+            elseif($rilback>$b[1]){
+                $rilback = $b[1];
+                $index = $itg;
+            }
+            $itg = $itg+1;
+        }
+        // dd($rilback);
+        // return $rilback;
+        // dd($rilback,$index,$shortestPaths[$index]);
+        array_push($trullyBack,$rilback);
+        array_push($trullyBack,$shortestPaths[$index]);
+        // dd($trullyBack);
+        return $trullyBack;
+
+
         // dd($datajrk);
         // $this->brpjrk("AX","AT");
         
     
     }
+    public function findShortestPaths($lines, $start, $end) {
+        // Inisialisasi antrian prioritas dengan jalur awal
+        $queue = [[$start]];
+        $shortestPaths = [];
+    
+        // Selama antrian tidak kosong dan belum menemukan jalur terpendek
+        while (!empty($queue) && count($shortestPaths) < 3) {
+            // Ambil jalur pertama dari antrian
+            $path = array_shift($queue);
+            $currentNode = end($path);
+    
+            // Jika jalur saat ini mencapai titik akhir
+            if ($currentNode == $end) {
+                // Tambahkan jalur ke daftar jalur terpendek
+                $shortestPaths[] = $path;
+                continue;
+            }
+    
+            // Loop melalui semua garis
+            foreach ($lines as $line) {
+                // Jika titik awal garis sama dengan titik saat ini
+                if ($line[0] == $currentNode && !in_array($line[1], $path)) {
+                    // Buat salinan jalur saat ini dan tambahkan titik akhir garis
+                    $newPath = $path;
+                    $newPath[] = $line[1];
+                    // Tambahkan jalur baru ke antrian prioritas
+                    $queue[] = $newPath;
+                }
+                // Jika titik akhir garis sama dengan titik saat ini (untuk garis yang dapat berbalik)
+                elseif ($line[1] == $currentNode && !in_array($line[0], $path)) {
+                    // Buat salinan jalur saat ini dan tambahkan titik awal garis
+                    $newPath = $path;
+                    $newPath[] = $line[0];
+                    // Tambahkan jalur baru ke antrian prioritas
+                    $queue[] = $newPath;
+                }
+            }
+    
+            // Urutkan antrian prioritas berdasarkan panjang jalur (semakin pendek, semakin awal)
+            usort($queue, function($a, $b) {
+                return count($a) <=> count($b);
+            });
+        }
+        
+        return $shortestPaths;
+    } 
     
     public function brpjrk($dtitikAwal, $dtitikAkhir)
     {

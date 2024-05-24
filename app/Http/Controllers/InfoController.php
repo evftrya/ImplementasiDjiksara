@@ -23,6 +23,67 @@ class InfoController extends Controller
         
         return view('setInfo',['titiks'=>$titiks,'lines'=>$Lines,'hewans'=>$hewans,'arys'=>$arys]);
     }
+    public function final(){
+        $ButTitiks = new ButTitikController();
+        $titikss = new TitikController();
+        $hew = new HewanController();
+        $info = new InfoController();
+        $Lines = $titikss->all();
+        $hewans = $hew->all();
+        // dd($titiks);
+        $titiks= $ButTitiks->all();
+        $arys = $info->GetAllInfo();
+        $butInfo = $ButTitiks->GetTitikBut();
+        return view('finalPage',['titiks'=>$titiks,'lines'=>$Lines,'hewans'=>$hewans,'arys'=>$arys,'butInfos'=>$butInfo,'butfill'=>[]]);
+    }
+    public function Rute(Request $request)
+    {
+        // dd($request);
+        // dd($request->garisx1);
+        // Simpan hanya nama dan jarak dalam database
+        $request->validate([
+            'inpTujuan' => 'required',
+            'inpAwal' => 'required'
+
+        ]);
+        $tujuan = $this->getTitikTujuan($request->inpTujuan);
+        dd($tujuan,$request->inpAwal);
+        $tc = new TitikController();
+        $hasils = [];
+        $shortest = 0;
+        $index = 0;
+        $itg = 0;
+        foreach($tujuan as $tuju){
+            $jarak = $tc->FindRute($tuju,$request->inpAwal);
+            array_push($hasils, $jarak);
+            if($shortest==0){
+                $shortest = $jarak[0];
+                $index = $itg;
+            }
+            elseif($shortest>$jarak[0]){
+                $shortest=$jarak[0];
+                $index = $itg;
+            }
+            $itg = $itg+1;
+        }
+        dd($hasils);
+
+        // foreach()
+        
+
+        return redirect('/');
+    }
+    public function getTitikTujuan($lokasi){
+        $titik = Info::select('Titik')
+            ->where('Lokasi_atau_hewan', $lokasi)
+            ->get();
+        // dd($titik);
+        $ary=[];
+        foreach($titik as $ti){
+            array_push($ary,$ti->Titik);
+        }
+        return $ary;
+    }
     public function store(Request $request)
     {
         // dd($request);
@@ -33,11 +94,15 @@ class InfoController extends Controller
             'NamaHewan' => 'required'
 
         ]);
-        // dd($request);
-        $titik = new info();
-        $titik->Titik = $request->titik;
-        $titik->Lokasi_atau_hewan = $request->NamaHewan;
-        $titik->save();
+        $arry = explode(",",$request->NamaHewan);
+        // dd($arry);
+        foreach($arry as $r){
+            $titik = new info();
+            $titik->Titik = $request->titik;
+            $titik->Lokasi_atau_hewan = $r;
+            $titik->save();
+        }
+        
 
         return redirect('/setinfo');
     }

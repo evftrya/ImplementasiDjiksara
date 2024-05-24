@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\butTitik;
+use Illuminate\Support\Facades\DB;
 
 class ButTitikController extends Controller
 {
@@ -18,6 +19,31 @@ class ButTitikController extends Controller
         // dd($titik);
         
         return $titik;
+    }
+
+    public function GetTitikBut(){
+
+        $results = DB::table('but_titiks')
+            ->join('infos', 'infos.Titik', '=', 'but_titiks.Nama')
+            ->select('but_titiks.Nama', DB::raw('GROUP_CONCAT(infos.Lokasi_atau_hewan SEPARATOR ",") AS Lokasi_hewan'))
+            ->groupBy('but_titiks.Nama')
+            ->get();
+        $arys=[];
+        // dd($results);
+        foreach($results as $re){
+            // dd(is_string($re->Lokasi_hewan));
+            $ary =[];
+            array_push($ary,$re->Nama);
+            // array_push($ary,array());
+            // $pisah = [];
+            $st  = explode(",",$re->Lokasi_hewan);
+            array_push($ary,$st);
+            ////
+            array_push($arys,$ary);
+        }
+        // dd($arys);
+        return $arys;
+
     }
 
     public function store(Request $request)
