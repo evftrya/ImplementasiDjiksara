@@ -7,8 +7,8 @@
 </head>
 <body >
     @foreach($titiks as $titik)
-        
-        <button id="butTitiks" class="Tititik" onclick="isi({{$titik['xDot']}},{{$titik['yDot']}},'{{$titik['Nama']}}')" style="position: absolute; top:{{$titik['yDot']}}px; left:{{$titik['xDot']}}px;z-index:400;"><p>{{$titik['Nama']}}</p></button>
+       
+        <button id="butTitiks" class="Tititik" onclick="isi('{{$titik['Nama']}}')" style="position: absolute; top:{{$titik['yDot']}}px; left:{{$titik['xDot']}}px;z-index:400;"><p>{{$titik['Nama']}}</p></button>
     @endforeach
         <svg class="lines" width="130vh" height="97vh" style="border:1px white solid; position:fixed; z-index:300;">
         @foreach($lines as $line)
@@ -18,33 +18,105 @@
     
     <div style="display:flex; gap:20vh; flex-direction: row; align-items:center; justify-content:center; width:100%;">
         <div id="fotoArea">
-            <img src="/foto/a2.png" alt="Foto" id="foto" onclick="tandaiTitik(event)" style="display:; z-index:1 !important;">
-            <img src="/foto/kosongan.png" alt="Foto" id="cekGaris" onclick="tandaiTitik(event)" style="display: none;">
+            <img src="/foto/flat.png" alt="Foto" id="foto" onclick="tandaiTitik(event)" style="display:; z-index:1 !important;">
+            
         </div>
         <div style="display: flex; flex-direction:column;">
             <button class="cek" id="gantiBut" onclick="ganti('kosong')">CEK GARIS</button>
             <button class="cek" id="kembali" onclick="ganti('full')" style="display:none;">KEMBALI</button>
             <a href="/new"><button>Reset</button></a>
-            <form action="/titik/store" method="post">
+            <form action="/setinfo/store" method="post">
                 @csrf
-                <input type="text" id="garisAwal" name="namaAwal" placeholder="TitikAwal">
-                <input type="text" id="garisAkhir" name="namaAkhir" placeholder="TitikAkhir">
-                <input type="text" id="posisi_x" name="posisi_x" placeholder="posx" disabled style="display:none;">
-                <input type="text" id="posisi_y" name="posisi_y" placeholder="posy" disabled style="display:none;">
-                <input type="text" id="x1" name="garisx1" placeholder="x1" >
-                <input type="teaxt" id="y1" name="garisy1" placeholder="y1" >
-                <input type="text" id="x2" name="garisx2" placeholder="x2" >
-                <input type="text" id="y2" name="garisy2" placeholder="y2" >
-                <input type="text" id="totalJarak" name="totalJarak" placeholder="total jarak" >
+                <input type="text" id = "titik"name="titik" placeholder="Klik Tombol">
+                <input type="text" id="namaHewan" name="NamaHewan" placeholder="Klik Hewan">
                 <button type="submit">Simpan</button>
             </form>
         </div>
-        <div class="navbar">
-            <a href="/ButTitik"><button>BUAT BUTTON</button></a>
-            <a href="/new"><button>BUAT LINE</button></a>
-        </div>
     </div>
-    
+    <div class="hewan">
+        @foreach($hewans as $hew)
+        <button onclick="isiHewan('{{$hew->namaHewan}}')">{{$hew->namaHewan}}</button>
+        @endforeach
+    </div>
+    <div class="detilinfo">
+        @foreach($arys as $ary)
+        <div id="info{{$ary[0]}}" class="infoses" style="display:none;">
+            @if(count($ary[1])>0)
+            <p style="font-size:15px;">Detil info Untuk Titik {{$ary[0]}}</p>
+
+            <div>
+                <br>
+                @foreach($ary[1] as $ar)
+                    <p>- {{$ar}}</p>
+                @endforeach
+            </div>
+            @else
+            <p style="font-size:15px;">Belum ada Detil Untuk Titik {{$ary[0]}}</p>
+
+            @endif
+        </div>
+        @endforeach
+    </div>
+    <!-- <div>
+        <p>daftar Hewan atau Tempat yang dekat</p>
+
+    </div> -->
+    <style>
+        .hewan {
+        position: relative;
+        width: 10%; /* Sesuaikan lebar sesuai kebutuhan */
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap; /* Untuk menangani responsifitas */
+        }
+
+        .button-tooltip {
+            position: absolute;
+            top: -30px; /* Adjust this value to position the text as desired */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .hewan button:hover + .button-tooltip {
+            display: block;
+        }
+
+    </style>
+
+        
+        <style>
+            .detilinfo{
+                position: absolute;
+                top: 30%;
+                left: 85%;
+                width: 10%;
+                background-color: #333;
+                padding: 4px;
+                
+            }
+            .detilinfo>div{
+                display: flex;
+                flex-direction: column;
+                /* flex-wrap: wrap; */
+                gap: 10% 10px;
+                /* border: 5px black solid; */
+                width: 100%;
+            }
+            .detilinfo>div>*{
+                /* border: 1px black solid; */
+                /* background-color: #f2f2f2; */
+                padding: 2px 2px;
+                margin: 2px 0;
+                color: white;
+                width: fit-content;
+            }
+        </style>
+
     <style>
         .lines{
             width: 130vh;
@@ -71,18 +143,16 @@
              
             color:white;
             background-color: greenyellow;
-            -webkit-text-stroke: 0.3px black;
-            font-size: 10px;
+            -webkit-text-stroke: 0.6px black;
+            -webkit-text-stroke-width: 0.3px;
+            font-size: 12px;
             width: 10px;
             height: 10px;
             padding: 0 0;
             margin: 0 0;
         }
-        #buttitiks>p{
-            padding: 0 0;
-            margin: 0 0;
-            font-size: 5px;
-        }
+        
+        
         .Tititik{
 
         }
@@ -92,7 +162,7 @@
             flex-direction: column;
             position: fixed;
             gap: 5px;
-            top: 50vh;
+            top: 10vh;
             right: 10vh;
             z-index: 900;
 
@@ -124,50 +194,57 @@
         body>div>*{
             /* border: 1px white solid; */
         }
-        form>input{
-            width: 10vh;
+        form input {
+            width: 20vh;
             border-radius: 3px;
-            text-decoration: none;
-            outline: none;
-            border: none;
+            background-color: #f2f2f2;
+            color: #333;
+            padding: 8px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s ease; /* Transisi untuk perubahan warna border */
         }
+
+form input:focus {
+    border-color: dodgerblue; /* Warna border saat mendapatkan fokus */
+}
+
     </style>
 
     <script>
         // console.log("tinggi : "+document.getElementById('foto').offsetHeight)
-        let press = 0;
-        function isi(x,y,nama){
-                console.log('nama : ',nama);
-                let tAw = document.getElementById('garisAwal');
-                let tAk = document.getElementById('garisAkhir');
-                let x1 = document.getElementById('x1');
-                let y1 = document.getElementById('y1');
-                let x2 = document.getElementById('x2');
-                let y2 = document.getElementById('y2');
-                let jrk = document.getElementById('totalJarak');
-            console.log('x: ',x,", y: ",y);
-            if(press==0){
-                x1.value=x;
-                y1.value=y;
-                tAw.value=nama;
-            }
-            else{
-                x2.value=x;
-                y2.value=y;
-                tAk.value=nama;
-                let ray1 = [];
-                let ray2 = [];
-                ray1.push(x1.value,y1.value);
-                ray2.push(x2.value,y2.value);
-
-                console.log(ray1);
-                console.log(ray2);
-                let result = hitung(ray1, ray2);
-                console.log('hasil : ',result);
-                jrk.value = result;
-            }
-            press = press+1;
+        function isiHewan(hewan){
+                console.log('nama : ',hewan);
+            let inp = document.getElementById('namaHewan');
+            inp.value=hewan;
         }
+        function isi(nama){
+                // console.log('nama : ',nama);
+                let inptitik = document.getElementById('titik');
+                inptitik.value = nama;
+                let infoses = document.getElementsByClassName('infoses');
+
+                // Convert infoses to an array using Array.from
+                Array.from(infoses).forEach(function(a) {
+                    a.style.display = "none";
+                    // console.log(a.textContent);
+                });
+
+                let dtl = 'info'+nama;
+                // console.log(dtl);
+                let inpdetil = document.getElementById(dtl);
+                if(inpdetil){
+                    console.log('ada');
+                }
+                else{
+                    console.log('tida ada');
+
+                }
+                // console.log(inpdetil.textContent);
+                inpdetil.style.display="flex";
+
+            // console.log('x: ',x,", y: ",y);
+            
+        }   
         
         let titik = [];
         function ganti(what){

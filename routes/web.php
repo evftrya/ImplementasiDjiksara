@@ -18,6 +18,9 @@ use App\Http\Controllers\GrapfController;
 use App\Http\Controllers\DistanceController;
 use App\Http\Controllers\TitikController;
 use App\Http\Controllers\ButTitikController;
+use App\Http\Controllers\JenisHewanController;
+use App\Http\Controllers\HewanController;
+use App\Http\Controllers\InfoController;
 
 Route::get('/grapf', [GrapfController::class, 'showShortestPath']);
 
@@ -30,11 +33,32 @@ Route::get('/calculate-distance', function(){
     return view('calculate_distance');
 });
 Route::post('/calculate-distance/store', [DistanceController::class, 'store']);
-Route::get('/', [TitikController::class,'index']);
+Route::get('/', function(){
+    return view('index');
+});
 Route::get('/new', [TitikController::class,'index']);
+Route::get('/teser', [TitikController::class,'tess']);
 Route::get('/ButTitik', [ButTitikController::class,'index']);
 
 Route::post('/titik/store', [TitikController::class,'store']);
 Route::post('/ButTitik/store', [ButTitikController::class,'store']);
 Route::get('/titik/hitung', [TitikController::class, 'hitungJarak']);
+// Route::get('/ceksql', [TitikController::class, 'teslagi']);
+Route::get('/setTempat',function(){
+    return view('set');
+});
+Route::get('/jenis',function(){
+    return view('tambahJenis');
+});
+Route::post('/Jenis/store', [JenisHewanController::class, 'store']);
+Route::get('/hewan',[HewanController::class,'index']);
+Route::post('/Hewan/store', [HewanController::class, 'store']);
+Route::get('/setinfo',[InfoController::class,'index']);
+Route::post('/setinfo/store',[InfoController::class,'store']);
+Route::get('/apeni',[InfoController::class,'cek']);
+
+
+
+
+
 

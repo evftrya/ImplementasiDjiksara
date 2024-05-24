@@ -13,6 +13,12 @@ class ButTitikController extends Controller
         // dd($titik[0]['xDot']);
         return view('newbuttitik',['titiks'=>$titik]);
     }
+    public function all(){
+        $titik = ButTitik::all();
+        // dd($titik);
+        
+        return $titik;
+    }
 
     public function store(Request $request)
     {
@@ -26,7 +32,7 @@ class ButTitikController extends Controller
         ]);
         $titik = new ButTitik;
         $titik->nama = $this->Makenama();
-        $titik->xDot = $request->xDot+110;
+        $titik->xDot = $request->xDot+110+245;
         $titik->yDot = $request->yDot;
         $titik->save();
 
@@ -39,8 +45,8 @@ class ButTitikController extends Controller
         $back = null;
             for($i=0;$i<count($array);$i++){
                 // dd($abjad);
-                if($this->check($array[$i])!=true){
-                    $back = $array[$i];
+                if($this->check("E".$array[$i])!=true){
+                    $back = "E".$array[$i];
 
                     // dd($back);
                 }

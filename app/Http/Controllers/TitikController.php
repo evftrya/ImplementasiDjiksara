@@ -5,13 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Titik;
 use App\Models\butTitik;
+use Illuminate\Support\Facades\DB;
 
 class TitikController extends Controller
 {
+    public $hitung=0;
     public function index()
     {
         $titiks = ButTitik::all();
-        return view('titik2',['titiks'=>$titiks]);
+        $Lines = $this->CallAllLine();
+        return view('titik2',['titiks'=>$titiks,'lines'=>$Lines]);
+    }
+    public function all(){
+        $lines = $this->CallAllLine();
+        return $lines;
     }
 
     public function store(Request $request)
@@ -31,7 +38,7 @@ class TitikController extends Controller
     $titik->jarak = $request->totalJarak;
     $titik->save();
 
-    return redirect('/');
+    return redirect('/new');
 }
 
     public function hitungJarak()
@@ -49,4 +56,159 @@ class TitikController extends Controller
 
         return $jarak_total_cm;
     }
+    public function CallAllLine(){
+        $result = DB::table('titiks as q')->select(
+            'q.TitikAwal','d.xDot as x1','d.yDot as y1','q.TitikAkhir','e.xDot as x2','e.yDOt as y2'
+        )->join('but_titiks as d','d.Nama','=','q.TitikAwal')->join('but_titiks as e','e.Nama','=','q.TitikAkhir')->get();
+        // dd($result);
+        
+        return $result;
+    }
+
+
+    public function AllLineArray(){
+        // CONTOH ARRAY
+        // $routes = array(
+        //     array('a', 'b'),
+        //     array('b', 'c'),
+        //     array('b', 'd'),
+        //     array('c', 'e'),
+        //     array('d', 'e'),
+        //     array('e', 'm')
+        // );
+        // dd($routes);
+        // convert data sql to that shape
+        $ary = [];
+        $all = $this->CallAllLine();
+        // $toArry = get_object_vars($all);
+        // dd(count($all));
+        // dd($all[0]);
+        $pjg = count($all);
+        for($s=0;$s<$pjg;$s++){
+            array_push($ary,array());
+            array_push($ary[$s],$all[$s]->TitikAwal);
+            array_push($ary[$s],$all[$s]->TitikAkhir);
+        }
+        return $ary;
+
+    }
+    // public function tess(){
+    //     $f = $this->LookTetangga("r",[]);
+    // }
+
+    
+
+
+    public function apanih(){
+        set_time_limit(500);
+
+        // Definisikan data 
+
+        // Definisikan data garis-garis yang xtersedia
+        $lines = $this->AllLineArray();
+        function findShortestPaths($lines, $start, $end) {
+            // Inisialisasi antrian prioritas dengan jalur awal
+            $queue = [[$start]];
+            $shortestPaths = [];
+        
+            // Selama antrian tidak kosong dan belum menemukan jalur terpendek
+            while (!empty($queue) && count($shortestPaths) < 1) {
+                // Ambil jalur pertama dari antrian
+                $path = array_shift($queue);
+                $currentNode = end($path);
+        
+                // Jika jalur saat ini mencapai titik akhir
+                if ($currentNode == $end) {
+                    // Tambahkan jalur ke daftar jalur terpendek
+                    $shortestPaths[] = $path;
+                    continue;
+                }
+        
+                // Loop melalui semua garis
+                foreach ($lines as $line) {
+                    // Jika titik awal garis sama dengan titik saat ini
+                    if ($line[0] == $currentNode && !in_array($line[1], $path)) {
+                        // Buat salinan jalur saat ini dan tambahkan titik akhir garis
+                        $newPath = $path;
+                        $newPath[] = $line[1];
+                        // Tambahkan jalur baru ke antrian prioritas
+                        $queue[] = $newPath;
+                    }
+                    // Jika titik akhir garis sama dengan titik saat ini (untuk garis yang dapat berbalik)
+                    elseif ($line[1] == $currentNode && !in_array($line[0], $path)) {
+                        // Buat salinan jalur saat ini dan tambahkan titik awal garis
+                        $newPath = $path;
+                        $newPath[] = $line[0];
+                        // Tambahkan jalur baru ke antrian prioritas
+                        $queue[] = $newPath;
+                    }
+                }
+        
+                // Urutkan antrian prioritas berdasarkan panjang jalur (semakin pendek, semakin awal)
+                usort($queue, function($a, $b) {
+                    return count($a) <=> count($b);
+                });
+            }
+        
+            return $shortestPaths;
+        }
+        
+        // Panggil fungsi untuk mencari 5 jalur terpendek dari titik AA ke titik BN
+        $shortestPaths = findShortestPaths($lines, "Z", "AF");
+        // dd($shortestPaths);
+        $datajrk = [];
+        $htg9 = 0;
+        foreach($shortestPaths as $one){
+            array_push($datajrk,0);
+            // dd(count($one));
+            for($y=0;$y<count($one);$y++){
+
+                if($y!=count($one)-1){
+                    $jrk = $this->brpjrk($one[$y],$one[$y+1]);
+                    $datajrk[$htg9]=$datajrk[$htg9]+$jrk[0]->jarak;
+                }
+
+                
+            }
+            $htg9 = $htg9+1;
+        }
+        
+        
+        // dd($datajrk);
+        // $this->brpjrk("AX","AT");
+        
+    
+    }
+    
+    public function brpjrk($dtitikAwal, $dtitikAkhir)
+    {
+        $results = DB::table('titiks')
+            ->where(function($query) use ($dtitikAwal, $dtitikAkhir) {
+                $query->where('TitikAwal', $dtitikAwal)
+                      ->where('TitikAkhir', $dtitikAkhir);
+            })
+            ->orWhere(function($query) use ($dtitikAwal, $dtitikAkhir) {
+                $query->where('TitikAwal', $dtitikAkhir)
+                      ->where('TitikAkhir', $dtitikAwal);
+            })
+            ->get();
+    
+        return $results;
+    }
+    
+    
+
+    
+
+    public function teslagi(){
+        // $this->CB("AA","BN");
+        // $this->CallAllLine();
+        $this->apanih();
+        // $this->AllLineArray();
+    }
+    
+
 }
+
+
+
