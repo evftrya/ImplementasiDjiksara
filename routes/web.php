@@ -54,8 +54,9 @@ Route::get('/jenis',function(){
 Route::post('/Jenis/store', [JenisHewanController::class, 'store']);
 Route::get('/hewan',[HewanController::class,'index']);
 Route::post('/Hewan/store', [HewanController::class, 'store']);
-Route::get('/setinfo',[InfoController::class,'index']);
-Route::post('/setinfo/store',[InfoController::class,'store']);
+// Route::post('');
+Route::get('/setinfo/{siapa}',[InfoController::class,'index']);
+Route::post('/setinfo/store/{siapa}',[InfoController::class,'store']);
 Route::get('/apeni',[InfoController::class,'cek']);
 Route::post('/closest-Route',[InfoController::class,'Rute']);
 Route::get('/denah',[InfoController::class,'final']);

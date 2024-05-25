@@ -6,10 +6,9 @@
     <title>Program Titik</title>
 </head>
 <body >
-    @foreach($titiks as $titik)
-       
-        <button id="butTitiks" class="Tititik" onclick="isi('{{$titik['Nama']}}')" style="position: absolute; top:{{$titik['yDot']}}px; left:{{$titik['xDot']}}px; z-index:400;"><p>{{$titik['Nama']}}</p></button>
-    @endforeach
+    @for($i=$start;$i<$end;$i++)
+        <button id="butTitiks" class="Tititik" onclick="isi('{{$titiks[$i]['Nama']}}')" style="position: absolute; top:{{$titiks[$i]['yDot']}}px; left:{{$titiks[$i]['xDot']}}px; z-index:400;"><p>{{$titiks[$i]['Nama']}}</p></button>
+    @endfor
         <svg class="lines" width="130vh" height="97vh" style="border:1px white solid; position:fixed; z-index:300;">
         @foreach($lines as $line)
             <line x1="{{(($line->x1)-362)}}" y1="{{$line->y1-10}}" x2="{{(($line->x2)-362)}}" y2="{{$line->y2-10}}" style="stroke: blue ;stroke-width:2;" />
@@ -25,7 +24,7 @@
             <button class="cek" id="gantiBut" onclick="ganti('kosong')">CEK GARIS</button>
             <button class="cek" id="kembali" onclick="ganti('full')" style="display:none;">KEMBALI</button>
             <a href="/new"><button>Reset</button></a>
-            <form action="/closest-Route" method="post" id="myform">
+            <form action="/setinfo/store/{{$siapa}}" method="post" id="myform">
                 @csrf
                 <input type="text" id = "titik"name="titik" placeholder="Klik Tombol">
                 <input type="text" id="namaHewan" name="NamaHewan" placeholder="Klik Hewan">
@@ -34,9 +33,15 @@
         </div>
     </div>
     <div class="hewan">
-        @foreach($hewans as $hew)
-        <button onclick="isiHewan('{{$hew->namaHewan}}')">{{$hew->namaHewan}}</button>
-        @endforeach
+        <p>NAMA HEWAN / TEMPAT</p>
+        <input type="text" name="" id="searches" oninput="cari()" placeholder="Ketik Disini..">
+        <hr style="width:100%;">
+        <div #cari4>
+            @foreach($hewans as $hew)
+            <button onclick="isiHewan('{{$hew->namaHewan}}')">{{$hew->namaHewan}}</button>
+            @endforeach
+        </div>
+        
     </div>
     <div class="detilinfo">
         @foreach($arys as $ary)
@@ -63,29 +68,52 @@
     </div> -->
     <style>
         .hewan {
-        position: relative;
-        width: 10%; /* Sesuaikan lebar sesuai kebutuhan */
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap; /* Untuk menangani responsifitas */
+            position: relative;
+            width: 15%; /* Sesuaikan lebar sesuai kebutuhan */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            left:3vh;
+            flex-wrap: wrap; /* Untuk menangani responsifitas */
+            background-color: #333;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            padding-bottom: 10px;
+            /* height: 650px; */
         }
-
-        .button-tooltip {
-            position: absolute;
-            top: -30px; /* Adjust this value to position the text as desired */
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #fff;
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            display: none;
+        .hewan>input{
+            padding: 10px;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+            width: 80%;
         }
-
-        .hewan button:hover + .button-tooltip {
-            display: block;
+        .hewan>div{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            padding: 10px;
+            overflow-y: auto;
+            height: 580px;
+            gap: 10px;
+            border-radius: 12px;
         }
+        .hewan>div::-webkit-scrollbar{
+            width: 5px;
 
+        }
+        .hewan>div>button{
+            background-color: white;
+            color: blue;
+            width: fit-content;
+            border: none;
+            outline: none;
+        }
+        .hewan>div>button:hover{
+            background-color: #355c7d;
+            color: white;
+        }
     </style>
 
         
@@ -211,10 +239,35 @@ form input:focus {
     </style>
 
     <script>
+        function cari() {
+            let buttons = document.querySelectorAll('.hewan>div>button');
+            let isi = document.getElementById('searches');
+            // console.log("a0");
+
+            buttons.forEach(function(a){
+                a.style.display = 'none';
+                if(a.textContent.toLowerCase().includes(isi.value.toLowerCase())){
+                    a.style.display = "";
+                }
+                // console.log(a.textContent);
+            })
+            if(isi.value==''){
+                buttons.forEach(function(a){
+                    a.style.display='';
+                })
+            }
+        }
+
+
         // console.log("tinggi : "+document.getElementById('foto').offsetHeight)
         function isiHewan(hewan){
                 // console.log('nama : ',hewan);
             let inp = document.getElementById('namaHewan');
+            let isi = document.getElementById('searches');
+            let buttons = document.querySelectorAll('.hewan>div>button');
+            buttons.forEach(function(b){
+                b.style.display="";
+            })
             if(inp.value==""){
                 inp.value=hewan;
             }

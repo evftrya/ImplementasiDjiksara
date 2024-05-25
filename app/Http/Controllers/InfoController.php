@@ -10,7 +10,7 @@ use App\Models\info;
 
 class InfoController extends Controller
 {
-    public function index()
+    public function index($siapa)
     {
         $ButTitiks = new ButTitikController();
         $titikss = new TitikController();
@@ -20,8 +20,23 @@ class InfoController extends Controller
         // dd($titiks);
         $titiks= $ButTitiks->all();
         $arys = $this->GetAllInfo();
-        
-        return view('setInfo',['titiks'=>$titiks,'lines'=>$Lines,'hewans'=>$hewans,'arys'=>$arys]);
+        $start = 0;
+        $end = 0;
+        if($siapa =='all'){
+            $start = 0;
+            $end = count($titiks);
+            return view('setInfo',['titiks'=>$titiks,'lines'=>$Lines,'hewans'=>$hewans,'arys'=>$arys,'start'=>$start,'end'=>$end,'siapa'=>$siapa]);
+        }
+        elseif($siapa=='dika'){
+            $start = 0;
+            $end = 69;
+            return view('setInfo',['titiks'=>$titiks,'lines'=>$Lines,'hewans'=>$hewans,'arys'=>$arys,'start'=>$start,'end'=>$end,'siapa'=>$siapa]);
+        }
+        elseif($siapa=='ageng'){
+            $start = 69;
+            $end = 138;
+            return view('setInfo',['titiks'=>$titiks,'lines'=>$Lines,'hewans'=>$hewans,'arys'=>$arys,'start'=>$start,'end'=>$end,'siapa'=>$siapa]);
+        }
     }
     public function final(){
         $ButTitiks = new ButTitikController();
@@ -114,7 +129,7 @@ class InfoController extends Controller
         }
         return $ary;
     }
-    public function store(Request $request)
+    public function store(Request $request,$siapa)
     {
         // dd($request);
         // dd($request->garisx1);
@@ -134,7 +149,7 @@ class InfoController extends Controller
         }
         
 
-        return redirect('/setinfo');
+        return redirect('/setinfo/'.$siapa);
     }
     public function cek(){
         // $this->getinfo('tes');
