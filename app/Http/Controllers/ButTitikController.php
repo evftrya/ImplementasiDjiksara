@@ -60,6 +60,7 @@ class ButTitikController extends Controller
         $titik->nama = $this->Makenama();
         $titik->xDot = $request->xDot+110+245;
         $titik->yDot = $request->yDot;
+        $titik->info = "null";
         $titik->save();
 
         return redirect('/ButTitik');

@@ -36,6 +36,7 @@ class TitikController extends Controller
     $titik->TitikAwal = $request->namaAwal;
     $titik->TitikAkhir = $request->namaAkhir;
     $titik->jarak = $request->totalJarak;
+    $titik->Alur = 2;
     $titik->save();
 
     return redirect('/new');
@@ -129,6 +130,7 @@ class TitikController extends Controller
         }
         
         $back = [];
+        // dd($back);
         foreach($shortestPaths as $rute){
             $ary = [];
             array_push($ary, $rute);
@@ -137,6 +139,7 @@ class TitikController extends Controller
         for($y=0;$y<count($datajrk);$y++){
             array_push($back[$y],$datajrk[$y]);
         }
+        // dd($back);
 
         // dd($back);
         $trullyBack = [];
@@ -174,7 +177,7 @@ class TitikController extends Controller
         $shortestPaths = [];
     
         // Selama antrian tidak kosong dan belum menemukan jalur terpendek
-        while (!empty($queue) && count($shortestPaths) < 3) {
+        while (!empty($queue) && count($shortestPaths) < 4) {
             // Ambil jalur pertama dari antrian
             $path = array_shift($queue);
             $currentNode = end($path);
@@ -185,7 +188,7 @@ class TitikController extends Controller
                 $shortestPaths[] = $path;
                 continue;
             }
-    
+    // dd($shortestPaths);
             // Loop melalui semua garis
             foreach ($lines as $line) {
                 // Jika titik awal garis sama dengan titik saat ini

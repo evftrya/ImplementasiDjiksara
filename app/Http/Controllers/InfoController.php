@@ -62,6 +62,7 @@ class InfoController extends Controller
 
         ]);
         $tujuan = $this->getTitikTujuan($request->inpTujuan);
+        // dd($tujuan);
         $tc = new TitikController();
         $finalResult = [];
         $hasils = [];
@@ -70,6 +71,7 @@ class InfoController extends Controller
         $itg = 0;
         foreach($tujuan as $tuju){
             $jarak = $tc->FindRute($tuju,$request->inpAwal);
+            //  dd($jarak);
             array_push($hasils, $jarak);
             if($shortest==0){
                 $shortest = $jarak[0];
@@ -81,6 +83,7 @@ class InfoController extends Controller
             }
             $itg = $itg+1;
         }
+        // dd($hasils);
         // dd("hasil",$hasils,"tujuan",$tujuan,"awal",$request->inpAwal,"akhir",$request->inpTujuan);
 
         array_push($finalResult,$hasils[$index]);
@@ -109,6 +112,7 @@ class InfoController extends Controller
         $titiks= $ButTitiks->all();
         $arys = $this->GetAllInfo();
         $ShowLines = $back;
+        // dd($ShowLines);
         
         return view('rute',['show' => $ShowLines,'Lines'=>$Lines]);
 
@@ -127,6 +131,7 @@ class InfoController extends Controller
         foreach($titik as $ti){
             array_push($ary,$ti->Titik);
         }
+        // dd($ary);
         return $ary;
     }
     public function store(Request $request,$siapa)

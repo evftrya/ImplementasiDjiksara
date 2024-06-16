@@ -4,14 +4,15 @@
     </head>
     <body>
         <div>
-        <a href="/hewan"><button><p>ELLEN</p></button></a>
+            <a href="/hewan"><button><p>ELLEN</p></button></a>
             <a href="/setinfo/dika"><button><p>DIKA</p></button></a>
             <a href="/setinfo/ageng"><button><p>AGENG</p></button></a>
             <a href="/setinfo/all"><button><p>SET INFO ALL</p></button></a>
             <a href="/denah"><button><p>Denah</p></button></a>
-            <a href="/new"><button><p>EVI</p></button></a>
-            <a href="/new"><button><p>EVI</p></button></a>
-            <a href="/new"><button><p>EVI</p></button></a>
+            <a href="/ButTitik"><button><p>Pembuatan Titik</p></button></a>
+            <a href="/new"><button><p>Pembuatan Garis Rute</p></button></a>
+            <a href="/hewan"><button><p>Input Hewan/Tempat</p></button></a>
+            <a href="/setinfo/all"><button><p>Pemberian Detil Info pada tiap Titik</p></button></a>
         </div>
         
     </body>
